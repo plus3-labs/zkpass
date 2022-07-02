@@ -23,7 +23,7 @@ And now let's go closer to a new implementation of DID: ZKPass.
 `ZKPass` is a cryptographic authenticator based on Mina’s Zero Knowledge Proof and acts as a user’s pass to the cryptographic world. Distinguish features are as below:
 
 1. `ZKPass` transforms wallet addresses into friendly, readable and easy-to-remember identifiers similar to the Ethereum ENS, and gives you full control over your encrypted identity without the fear of losing your private key through an unmanaged email social recovery solution.
-2. Through Mina Protocol’s the unique ZK Oracle zero-knowledge proof solution, `ZKPass` can bring in real-world attributes such as the user’s real and valid identity tag according to the user’s wishes, while maintaining privacy, allowing users to bind multiple chain addresses and verify their social accounts to make their encrypted identity more valuable. At the same time, through these real and valid off-chain data and users’ on-chain behaviour data to form the users verifiable reputation, the users’ encrypted identity formed based on ZKPass can ensure the uniqueness of the user and be integrated by all Snapps in the ecosystem through SSO services, which can be used to avoid Bots (e.g NFT or airdrop campaign) and achieve more valuable voting governance to maintain fairness users will also get more potential airdrop opportunities and additional incentives from the Dapp.
+2. Through Mina Protocol’s the unique ZK Oracle zero-knowledge proof solution, `ZKPass` can bring in real-world attributes such as the user’s real and valid identity tag according to the user’s wishes, while maintaining privacy, allowing users to bind multiple chain addresses and verify their social accounts to make their encrypted identity more valuable. At the same time, through these real and valid off-chain data and users’ on-chain behaviour data to form the users verifiable reputation, the users’ encrypted identity formed based on ZKPass can ensure the uniqueness of the user and be integrated by all zkApp in the ecosystem through SSO services, which can be used to avoid Bots (e.g NFT or airdrop campaign) and achieve more valuable voting governance to maintain fairness users will also get more potential airdrop opportunities and additional incentives from the Dapp.
 3. Users can use ZKPass without revealing their external wallet address, which will better protect their privacy through the separation of authorisation and asset control identity keys. We also plan to introduce a contract wallet feature to support a certain level of privacy for transactions.
 
 ## High level user view
@@ -32,11 +32,97 @@ And now let's go closer to a new implementation of DID: ZKPass.
 
 ## Integration
 
-Based on the features above, zkpass is able to be integrated into all snapps as their ID component. You know, ID is really important for some activities of snapps, like avoiding bots in token airdrop or NFT application for a DAO.
+Based on the features above, zkpass is able to be integrated into all zkApp as their ID component. You know, ID is really important for some activities of zkApp, like avoiding bots in token airdrop or NFT application for a DAO.
+
 ![image](https://user-images.githubusercontent.com/92623877/174844358-0347e8aa-cbe3-4a7d-958c-023a6468704e.png)
+
+## Why Mina
+
+As a dapp, zkpass's serving abilities depends much on the underlying blockchain system. On the other hand, as a DID dapp related deeply to privacy, zkpass need a strong mechanism to guarantee protection of user sensitive data. With deep consideration, Zkpass choose Mina!!
+
+Mina is the world’s lightest blockchain. Rather than apply brute computing force, Mina uses advanced cryptography and recursive zk-SNARKs to design an entire blockchain that is and always will be about 22kb, ushering in a new era of blockchain accessibility. Distinguishing features as below:
+
+1. the entire Mina blockchain can be kept constantly about 22kb, equivalent to the size of several tweets. As a result, everyone can quickly synchronize and verify the network.
+
+2. Compared with other heavy protocols that rely on middlemen to run nodes, Mina is very light, and anyone can quickly connect, synchronize and verify the blockchain. It is built on a constant-sized proof of encryption that remains accessible at all times, even as it scales to millions of users.
+
+3. By using Mina, anyone in the sync chain can verify transactions as if they were validating a full node. Mina's design means that any participant can participate in proof-of-stake consensus, gain strong censorship resistance, and secure the blockchain.
+
+4. Mina's zkApp, a decentralized application based on SNARK, gives users complete control over the verification and sharing of personal data, not just the data itself, but even to competitors. Using offline logic, data computing and online verification, zkApp is easy to scale, high-performance computing, and cost-effective. (This fits the requirement about privacy pretection of Zkpass)
+   Mina's zkApp can access any website through a private gateway and use verified real-world data online. As a result, developers can use real-world information to analyze and make decisions without compromising privacy.
 
 ## Modular
 
 As you can see, ZKPass is such a big project with several features. Thus we seperate it into multiple modules: Wallet Based on Smart Contract, DID module ([MNS](https://github.com/plus3-labs/mns-frontend) (under development yet)), Shielded Transfer module ([Shadow](https://github.com/plus3-labs/shadow) (under development yet)) and so on.
 
-##
+The following, we will present [Shadow](https://github.com/plus3-labs/shadow) on a very high level, Since Shadow is the part of Zkpass that mainly joined Mina's Builder Program.
+
+## Shadow -- A Private Account System On Mina
+
+As we talked before, the mixer project is an extracted component from our original design of `zkPass`(Crypto Identity) for MINA's Builder program. Based on this, this mixer project (named `Shadow`) is still based on the account model, which means everyone could register and hold a unique name in the scope.
+
+To keep this feature and also to keep privacy, we made great effort on the design of how to maintain `Deposition to mixer without name exposure`, `Transfer internally without any exposure`, and `Withdraw from mixer without name exposure`.
+So people could got a unique name in the crypto world and never worry about their asset operations to be traced in the scope.
+
+![image](https://user-images.githubusercontent.com/92623877/176987361-599cc1a9-3f9f-4534-b54e-816fc38634fc.png)
+
+### User Registration
+
+![image](https://user-images.githubusercontent.com/92623877/176987370-7a88541f-022c-4e10-9c61-786c41974685.png)
+
+Firstly, You need some amount of mina tokens on your wallet (plugin);
+
+Secondly, Enter the index page, You are directed to provide your own unique name as well as a complex passcode which needs backuping it and is for Transfer&Withdraw section.
+
+Then, the page will generate a key pairs locally for encryption and decryption of your account info & all transactions data.
+
+Next, wallet plugin would be triggered to encrypte the private key and store it locally.
+
+Last, You passcode above will also be stored as `Hash(passcode+name)` both on contract and locally.
+
+### User Logon
+
+![image](https://user-images.githubusercontent.com/92623877/176987375-b2c8c119-6d98-4816-a27b-3409c97d8a5c.png)
+
+Firstly, at the initial version, You could only log on `Shadow` on the original client(e.g. explorer) with the same wallet.(will be improved on future version)
+
+Then, please provide your registered name and passcode.
+
+Underlying, `Shadow` will load local AccountInfo by your name, and trigger wallet plugin to decrypt private key. Meanwhile, all your historical transaction data will by fetched back and decrypted by private key, and then present them on page to you.
+
+### Deposit
+
+![image](https://user-images.githubusercontent.com/92623877/176987389-a702e736-664f-4995-822d-c462158928ef.png)
+
+Firstly, you need to prepare some mina tokens on your wallet.
+
+Then, `Shadow` will direct you to transfer your specified amount of mina tokens by triggering wallet plugin and broadcast your transaction after getting your authorization.
+During it, `Shadow` initials your account and updates your initial balance and generate proof attached insides.
+
+Tips: on this section, Your transaction is from your wallet, which could be tracked.
+
+### Withdraw
+
+![image](https://user-images.githubusercontent.com/92623877/176987404-601ba2d3-9d2e-4540-abbc-233c709fd328.png)
+
+Firstly, you need to input the amount of depositing tokens as well as your target wallet address.
+
+Then you are prompted for your passcode. Please enter.
+
+Underlyingly, Shadow check if `Hash(passcode+name)` is equal to that on contract and update related data such as balance, merkle tree root and generating proof.
+
+Then send it as a whole to relayers to help generate valid transaction and broadcast it. Of course, you need to pay some fee(spent by balance on Shadow, consisting of two parts mainly: transaction cost and replayer fee) to relayers for this withdraw.
+
+### Transfer by name
+
+![image](https://user-images.githubusercontent.com/92623877/176987477-f08808a9-dd45-4a25-9d95-da82055ca2f8.png)
+
+Firstly, you need to input the amount of depositing tokens as well as your target reciever’s unique name.
+
+Then you are prompted for your passcode. Please enter.
+Underlyingly, Shadow check if `Hash(passcode+name)` is equal to that on contract and update related data such as balance, merkle tree root and generating proof.
+Besides, a `unrecieved transaction item` <hash(to), encryptedTx> will also generated as attached (for target reciever when it logs on), and a `transfer transaction item` <hash(from), encryptedTx> also is generated for history recording.
+
+Then send it as a whole to relayers to help generate valid transaction and broadcast it. Of course, you need to pay some fee(spent by balance on `Shadow`, consisting of two parts mainly: transaction cost and replayer fee) to relayers for this withdraw.
+
+When the reciever log on, and will be presented all his/her `unrecieved transaction items`, then he/she will be directed to receive it by his/her authorization on wallet plugin and send this operation to relayer to generate a transaction and broadcast.
