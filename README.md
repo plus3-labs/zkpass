@@ -28,13 +28,14 @@ And now let's go closer to a new implementation of DID: ZKPass.
 
 ## High level user view
 
-![image](https://user-images.githubusercontent.com/92623877/174844091-8868b5d1-fac2-4f0f-bc4a-66ebfbe49ef3.png)
+![image](https://user-images.githubusercontent.com/92623877/176992573-3f6ed9cd-e62e-49db-9607-55000b62e3f5.png)
 
 ## Integration
 
 Based on the features above, zkpass is able to be integrated into all zkApp as their ID component. You know, ID is really important for some activities of zkApp, like avoiding bots in token airdrop or NFT application for a DAO.
 
-![image](https://user-images.githubusercontent.com/92623877/174844358-0347e8aa-cbe3-4a7d-958c-023a6468704e.png)
+![image](https://user-images.githubusercontent.com/92623877/176992810-355722ce-0726-4de4-aa40-83d26be9687b.png)
+
 
 ## Why Mina
 
